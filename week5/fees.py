@@ -25,6 +25,11 @@ FEE_SHARE = {
     StudentType.SCHOLARSHIP: 0.0,
 }
 
+FEE_LABEL = {
+    StudentType.REGULAR: "Student fee",
+    StudentType.STAFF_CHILD: "Staff child fee",
+}
+
 
 def tuition_fee(courses, kind, summer=False, discount=0, extras=()):
     hours = sum(course.hours for course in courses)
@@ -35,20 +40,28 @@ def tuition_fee(courses, kind, summer=False, discount=0, extras=()):
         total += SUMMER_SURCHARGE
     return total - discount + sum(extras)
 
-def report(courses, kind, summer, discount):
+
+def fee_report(courses, kind, summer=False, discount=0):
     fee = tuition_fee(courses, kind, summer, discount)
-    if kind == StudentType.REGULAR:
-        print("Student fee: " + str(fee))
-    elif kind == StudentType.STAFF_CHILD:
-        print("Staff child fee: " + str(fee))
+    lines = []
+    if kind in FEE_LABEL:
+        lines.append(f"{FEE_LABEL[kind]}: {fee}")
     if fee > LARGE_FEE_THRESHOLD:
-        print("High fee")
-    return fee
+        lines.append("High fee")
+    return "\n".join(lines)
+
 
 def process_all(students):
+    fees = {}
     for student in students:
         if student["type"] == StudentType.REGULAR:
             fee = tuition_fee(student["courses"], StudentType.REGULAR, student["summer"])
         if student["type"] == StudentType.STAFF_CHILD:
             fee = tuition_fee(student["courses"], StudentType.STAFF_CHILD, student["summer"])
-        print(student["name"], fee)
+        fees[student["name"]] = fee
+    return fees
+
+
+def print_fees(students):
+    for name, fee in process_all(students).items():
+        print(name, fee)
