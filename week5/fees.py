@@ -1,7 +1,4 @@
-import os
-import math
-
-def calc(d, t, y, s, disc, extra=[]):
+def calc(d, t, s, disc, extra=[]):
     # t: 1=student, 2=staff child, 3=scholarship
     total = 0
     for c in d:
@@ -19,11 +16,10 @@ def calc(d, t, y, s, disc, extra=[]):
         total = total - disc
     for e in extra:
         total = total + e
-    tmp = total * 1.0
     return total
 
-def report(d, t, y, s, disc):
-    x = calc(d, t, y, s, disc)
+def report(d, t, s, disc):
+    x = calc(d, t, s, disc)
     if t == 1:
         print("Student fee: " + str(x))
     elif t == 2:
@@ -35,7 +31,7 @@ def report(d, t, y, s, disc):
 def ProcessAll(students):
     for st in students:
         if st["type"] == 1:
-            fee = calc(st["courses"], 1, 2026, st["summer"], None)
+            fee = calc(st["courses"], 1, st["summer"], None)
         if st["type"] == 2:
-            fee = calc(st["courses"], 2, 2026, st["summer"], None)
+            fee = calc(st["courses"], 2, st["summer"], None)
         print(st["name"], fee)
