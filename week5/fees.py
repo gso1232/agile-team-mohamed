@@ -1,8 +1,12 @@
+"""Tuition fees for the Student Services App (refactored from legacy_fees.py)."""
+
 from dataclasses import dataclass
 from enum import IntEnum
 
 
 class StudentType(IntEnum):
+    """Kinds of student; the numbers match the old type codes 1/2/3."""
+
     REGULAR = 1
     STAFF_CHILD = 2
     SCHOLARSHIP = 3
@@ -10,6 +14,8 @@ class StudentType(IntEnum):
 
 @dataclass(frozen=True)
 class Course:
+    """A course the student is registered for."""
+
     hours: int
 
 
@@ -28,10 +34,12 @@ FEE_SHARE = {
 FEE_LABEL = {
     StudentType.REGULAR: "Student fee",
     StudentType.STAFF_CHILD: "Staff child fee",
+    StudentType.SCHOLARSHIP: "Scholarship fee",
 }
 
 
 def tuition_fee(courses, kind, summer=False, discount=0, extras=()):
+    """Return the fee for one student's courses."""
     hours = sum(course.hours for course in courses)
     total = hours * RATE_PER_HOUR * FEE_SHARE[kind]
     if total > LARGE_FEE_THRESHOLD:
@@ -42,26 +50,25 @@ def tuition_fee(courses, kind, summer=False, discount=0, extras=()):
 
 
 def fee_report(courses, kind, summer=False, discount=0):
+    """Return the fee as printable text, flagging high fees."""
     fee = tuition_fee(courses, kind, summer, discount)
-    lines = []
-    if kind in FEE_LABEL:
-        lines.append(f"{FEE_LABEL[kind]}: {fee}")
+    lines = [f"{FEE_LABEL[kind]}: {fee}"]
     if fee > LARGE_FEE_THRESHOLD:
         lines.append("High fee")
     return "\n".join(lines)
 
 
 def process_all(students):
-    fees = {}
-    for student in students:
-        if student["type"] == StudentType.REGULAR:
-            fee = tuition_fee(student["courses"], StudentType.REGULAR, student["summer"])
-        if student["type"] == StudentType.STAFF_CHILD:
-            fee = tuition_fee(student["courses"], StudentType.STAFF_CHILD, student["summer"])
-        fees[student["name"]] = fee
-    return fees
+    """Return {name: fee} for every student, whatever their type."""
+    return {
+        student["name"]: tuition_fee(
+            student["courses"], StudentType(student["type"]), student["summer"]
+        )
+        for student in students
+    }
 
 
 def print_fees(students):
+    """Print one line per student with their fee."""
     for name, fee in process_all(students).items():
         print(name, fee)
