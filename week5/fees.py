@@ -1,17 +1,32 @@
+from enum import IntEnum
+
+
+class StudentType(IntEnum):
+    REGULAR = 1
+    STAFF_CHILD = 2
+    SCHOLARSHIP = 3
+
+
+RATE_PER_HOUR = 350
+STAFF_CHILD_SHARE = 0.5
+LARGE_FEE_THRESHOLD = 6000
+LARGE_FEE_REDUCTION = 200
+SUMMER_SURCHARGE = 150
+
+
 def tuition_fee(courses, kind, summer, discount, extras=[]):
-    # kind: 1=student, 2=staff child, 3=scholarship
     total = 0
     for course in courses:
-        if kind == 1:
-            total = total + course["h"] * 350
-        elif kind == 2:
-            total = total + course["h"] * 350 * 0.5
-        elif kind == 3:
+        if kind == StudentType.REGULAR:
+            total = total + course["h"] * RATE_PER_HOUR
+        elif kind == StudentType.STAFF_CHILD:
+            total = total + course["h"] * RATE_PER_HOUR * STAFF_CHILD_SHARE
+        elif kind == StudentType.SCHOLARSHIP:
             total = total + 0
-    if total > 6000:
-        total = total - 200
+    if total > LARGE_FEE_THRESHOLD:
+        total = total - LARGE_FEE_REDUCTION
     if summer == True:
-        total = total + 150
+        total = total + SUMMER_SURCHARGE
     if discount != None:
         total = total - discount
     for extra in extras:
@@ -20,18 +35,18 @@ def tuition_fee(courses, kind, summer, discount, extras=[]):
 
 def report(courses, kind, summer, discount):
     fee = tuition_fee(courses, kind, summer, discount)
-    if kind == 1:
+    if kind == StudentType.REGULAR:
         print("Student fee: " + str(fee))
-    elif kind == 2:
+    elif kind == StudentType.STAFF_CHILD:
         print("Staff child fee: " + str(fee))
-    if fee > 6000:
+    if fee > LARGE_FEE_THRESHOLD:
         print("High fee")
     return fee
 
 def process_all(students):
     for student in students:
-        if student["type"] == 1:
-            fee = tuition_fee(student["courses"], 1, student["summer"], None)
-        if student["type"] == 2:
-            fee = tuition_fee(student["courses"], 2, student["summer"], None)
+        if student["type"] == StudentType.REGULAR:
+            fee = tuition_fee(student["courses"], StudentType.REGULAR, student["summer"], None)
+        if student["type"] == StudentType.STAFF_CHILD:
+            fee = tuition_fee(student["courses"], StudentType.STAFF_CHILD, student["summer"], None)
         print(student["name"], fee)
