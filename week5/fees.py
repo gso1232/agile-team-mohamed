@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from enum import IntEnum
 
 
@@ -5,6 +6,11 @@ class StudentType(IntEnum):
     REGULAR = 1
     STAFF_CHILD = 2
     SCHOLARSHIP = 3
+
+
+@dataclass(frozen=True)
+class Course:
+    hours: int
 
 
 RATE_PER_HOUR = 350
@@ -20,8 +26,8 @@ FEE_SHARE = {
 }
 
 
-def tuition_fee(courses, kind, summer=False, discount=0, extras=[]):
-    hours = sum(course["h"] for course in courses)
+def tuition_fee(courses, kind, summer=False, discount=0, extras=()):
+    hours = sum(course.hours for course in courses)
     total = hours * RATE_PER_HOUR * FEE_SHARE[kind]
     if total > LARGE_FEE_THRESHOLD:
         total -= LARGE_FEE_REDUCTION
