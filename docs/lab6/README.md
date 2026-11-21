@@ -26,14 +26,14 @@ Each business rule was one cycle: the **red** commit holds only the new test (py
 
 | Rule | Red (test only) | Green (code) |
 |---|---|---|
-| 1. Registering adds the course's hours | `cf0f3e9` · 1 error (no `registration` module) | `c9999ee` · 1 passed |
-| 2. Total may not go over 18 hours | `ad3cd3c` · 1 error (no `RegistrationError`) | `1fe8f25` · 2 passed |
-| 3. Same course cannot be registered twice | `c74c79b` · 1 failed, 2 passed | `d3490a4` · 3 passed |
-| 4. A registered course can be dropped | `b7b7cc5` · 1 failed, 3 passed | `2ea43de` · 4 passed |
+| 1. Registering adds the course's hours | `f1415b6` · 1 error (no `registration` module) | `d8bbe8e` · 1 passed |
+| 2. Total may not go over 18 hours | `5dace4a` · 1 error (no `RegistrationError`) | `3f53184` · 2 passed |
+| 3. Same course cannot be registered twice | `6d82f5f` · 1 failed, 2 passed | `e0bc205` · 3 passed |
+| 4. A registered course can be dropped | `549eca8` · 1 failed, 3 passed | `b3bc53b` · 4 passed |
 
 ### Task A1 — coverage
 
-With the four tests the report showed **95%**, missing line 26 (the error for dropping a course that is not registered). The fifth test `test_cannot_drop_a_course_that_is_not_registered` drops `SET472` while only `SET312` is registered, expects `RegistrationError("SET472 is not registered")`, and checks the student still has 3 hours. Coverage is now **100%** (`20ad10e`).
+With the four tests the report showed **95%**, missing line 26 (the error for dropping a course that is not registered). The fifth test `test_cannot_drop_a_course_that_is_not_registered` drops `SET472` while only `SET312` is registered, expects `RegistrationError("SET472 is not registered")`, and checks the student still has 3 hours. Coverage is now **100%** (`ff073cd`).
 
 ```text
 Name              Stmts   Miss  Cover   Missing
@@ -46,7 +46,7 @@ registration.py      20      0   100%
 
 ## Part B — BDD
 
-The six scenarios from the handout passed first (`d3e076d`). For **Task B1** the drop scenario was added on its own (`a8b9db0`): behave reported `When the student drops "SET312"` as **undefined**. The new step reuses the existing `Given` and `Then` steps; only one `@when` was written (`a53b9de`):
+The six scenarios from the handout passed first (`110fd0d`). For **Task B1** the drop scenario was added on its own (`07cfaf3`): behave reported `When the student drops "SET312"` as **undefined**. The new step reuses the existing `Given` and `Then` steps; only one `@when` was written (`c503a79`):
 
 ```python
 @when('the student drops "{code}"')
@@ -80,15 +80,15 @@ def step_drop(context, code):
 
 | Commit | Step | Principle | Tests |
 |---|---|---|---|
-| `7e58648` | 1. Characterization tests on the **unchanged** code: regular 7200, scholarship 3600, international 17000 | safety net | 8 passed |
-| `cf394e3` | 2. Name the magic numbers | readability | 8 passed |
-| `700522d` | 3. One policy class per fee rule with `fee(hours)` | SRP | 8 passed |
-| `2cf8010` | 4. `POLICIES` lookup replaces the `if/elif` chain | OCP | 8 passed |
-| `0ca3587` | 5. Writer passed in (`FileWriter` by default); `print` removed; `FakeWriter` test added | DIP | 9 passed |
+| `05a73d5` | 1. Characterization tests on the **unchanged** code: regular 7200, scholarship 3600, international 17000 | safety net | 8 passed |
+| `02a5309` | 2. Name the magic numbers | readability | 8 passed |
+| `7d0e7eb` | 3. One policy class per fee rule with `fee(hours)` | SRP | 8 passed |
+| `4ad5bfb` | 4. `POLICIES` lookup replaces the `if/elif` chain | OCP | 8 passed |
+| `5dc3033` | 5. Writer passed in (`FileWriter` by default); `print` removed; `FakeWriter` test added | DIP | 9 passed |
 
 ### Task C2 — `SiblingPolicy`, test first
 
-`03bed6c` added `test_sibling_gets_25_percent_off_the_regular_fee` (6 hours × 1200 = 7200, minus 25% = **5400**) and it failed. `16da7ff` made it pass by adding **one class and one dictionary entry**; `git diff` of that commit adds 8 lines and does not touch `make_invoice`.
+`deec516` added `test_sibling_gets_25_percent_off_the_regular_fee` (6 hours × 1200 = 7200, minus 25% = **5400**) and it failed. `b22061d` made it pass by adding **one class and one dictionary entry**; `git diff` of that commit adds 8 lines and does not touch `make_invoice`.
 
 ```python
 class SiblingPolicy:
